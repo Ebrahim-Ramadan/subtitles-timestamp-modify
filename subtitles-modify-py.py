@@ -1,16 +1,27 @@
 import srt
+import tkinter as tk
 from datetime import timedelta
 
-# Function to adjust (advance or delay) subtitles in an SRT file
+root = tk.Tk()
+root.title("Subtitles Timestamp Modify")
+
+entry = tk.Entry(root)
+entry.pack()
+
+
+def is_not_number(input_str):
+    try:
+        float(input_str)
+    except ValueError:
+        return True
+    return False
 
 
 def adjust_subtitles(input_file, output_file, time_adjustment_seconds):
     try:
-        # Read the original subtitle file
         with open(input_file, 'r', encoding='utf-8') as file:
             original_subs = list(srt.parse(file.read()))
 
-        # Apply the time adjustment to each subtitle
         adjusted_subs = []
         for subtitle in original_subs:
             start_time = subtitle.start + \
@@ -20,7 +31,6 @@ def adjust_subtitles(input_file, output_file, time_adjustment_seconds):
             adjusted_subs.append(srt.Subtitle(
                 subtitle.index, start_time, end_time, subtitle.content))
 
-        # Write the adjusted subtitles to the output file
         with open(output_file, 'w', encoding='utf-8') as file:
             file.write(srt.compose(adjusted_subs))
 
@@ -31,12 +41,21 @@ def adjust_subtitles(input_file, output_file, time_adjustment_seconds):
         print(f"An error occurred: {e}")
 
 
-# Usage example
-if __name__ == "__main__":
-    # Replace with the path to your input subtitle file
-    input_file = "fresh.off.the.boat.1e04.dvdrip.x264-reward.srt"
-    output_file = "output.srt"  # Replace with the desired output file path
-    # Adjust this to the number of seconds you want to adjust the subtitles (negative for early, positive for delay)
-    time_adjustment_seconds = -1
+def get_time_adjustment_and_adjust():
+    time_adjustment_str = entry.get()
 
-    adjust_subtitles(input_file, output_file, time_adjustment_seconds)
+    if is_not_number(time_adjustment_str):
+        print("Invalid input. Please enter a valid number.")
+    else:
+        time_adjustment_seconds = float(time_adjustment_str)
+
+        input_file = "fresh.off.the.boat.1e04.dvdrip.x264-reward.srt"
+        output_file = "output.srt"
+        adjust_subtitles(input_file, output_file, time_adjustment_seconds)
+
+
+adjust_button = tk.Button(root, text="Adjust Subtitles",
+                          command=get_time_adjustment_and_adjust)
+adjust_button.pack()
+
+root.mainloop()
