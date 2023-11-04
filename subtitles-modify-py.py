@@ -6,6 +6,7 @@ import os
 
 root = tk.Tk()
 root.title("Subtitles Timestamp Modify")
+root.geometry('400x100')
 
 
 def is_not_number(input_str):
