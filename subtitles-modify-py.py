@@ -3,10 +3,23 @@ import tkinter as tk
 from datetime import timedelta
 from tkinter import filedialog
 import os
+import glob
 
 root = tk.Tk()
 root.title("Subtitles Timestamp Modify")
-root.geometry('400x100')
+root.geometry('400x400')
+
+
+def show_error_message(message):
+    error_window = tk.Toplevel()
+    error_window.title("Error")
+
+    label = tk.Label(error_window, text=message, padx=10, pady=10)
+    label.pack()
+
+    ok_button = tk.Button(error_window, text="OK",
+                          command=error_window.destroy)
+    ok_button.pack()
 
 
 def is_not_number(input_str):
@@ -38,7 +51,8 @@ def adjust_subtitles(input_file, output_file, time_adjustment_seconds):
             f"Subtitles adjusted by {time_adjustment_seconds} seconds and saved to {output_file}")
         timeEntry.delete(0, tk.END)
     except Exception as e:
-        print(f"An error occurred: {e}")
+        show_error_message(e)
+        raise ValueError("An error occurred:", e)
 
 
 def srt_file_browsing():
@@ -53,11 +67,29 @@ def srt_file_browsing():
     return False
 
 
+def srt_folder_browsing():
+    global folderPath
+    DIR_label = tk.Label(root, text='')
+    folderPath = filedialog.askdirectory(title="Select a folder")
+    if folderPath:
+        srt_files = glob.glob(os.path.join(folderPath, '*.srt'))
+
+        if srt_files:
+            DIR_label.config(text='\n'.join(
+                [os.path.basename(single_srt_file) for single_srt_file in srt_files]), wraplength=400)
+            DIR_label.pack()
+        else:
+            DIR_label.config(text='no .srt files found')
+    else:
+        show_error_message('error found in the chosen directory')
+
+
 def get_time_adjustment_and_adjust():
     time_adjustment_str = timeEntry.get()
 
     if is_not_number(time_adjustment_str):
-        print("Invalid input. Please enter a valid number.")
+        show_error_message("Invalid input. Please enter a valid number.")
+        raise ValueError("Invalid input. Please enter a valid number.")
     else:
         time_adjustment_seconds = float(time_adjustment_str)
 
@@ -70,11 +102,17 @@ def get_time_adjustment_and_adjust():
                                  time_adjustment_seconds)
 
 
-Browsebtn = tk.Button(root, text="Browse srt file",
-                      command=srt_file_browsing)
-Browsebtn.pack()
+BrowseFiles_btn = tk.Button(root, text="Browse srt file",
+                            command=srt_file_browsing)
+BrowseFiles_btn.pack()
+
 fileName_Label = tk.Label(root, text='')
 fileName_Label.pack()
+
+BrowseDIR_btn = tk.Button(root, text="select a directory",
+                          command=srt_folder_browsing)
+BrowseDIR_btn.pack()
+
 
 timeEntry = tk.Entry(root)
 timeEntry.pack()
