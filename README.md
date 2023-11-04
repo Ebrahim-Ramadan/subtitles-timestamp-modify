@@ -1,2 +1,2 @@
 # subtitles-timestamp-modify
-tkinter window for .srt files browsing and time adjusting.
+simple app to adjust the .srt files (delay or get some subtitles earlier), provided a tk window for files browsing and adjusting inputs
