@@ -55,12 +55,14 @@ def adjust_subtitles(input_file, output_file, time_adjustment_seconds):
         raise ValueError("An error occurred:", e)
 
 
+input_file = None
+
+
 def srt_file_browsing():
     global input_file
     input_file = filedialog.askopenfilename(
         filetypes=[("SRT files", "*.srt")])
     if (input_file):
-
         input_file_name = os.path.basename(input_file)
         fileName_Label.config(text=input_file_name)
         return input_file
@@ -68,16 +70,17 @@ def srt_file_browsing():
 
 
 def srt_folder_browsing():
-    global folderPath
-    DIR_label = tk.Label(root, text='')
+    global folderPath, srt_files
+    DIR_label = tk.Label(root, text='', wraplength=400)
     folderPath = filedialog.askdirectory(title="Select a folder")
     if folderPath:
         srt_files = glob.glob(os.path.join(folderPath, '*.srt'))
 
         if srt_files:
             DIR_label.config(text='\n'.join(
-                [os.path.basename(single_srt_file) for single_srt_file in srt_files]), wraplength=400)
+                [os.path.basename(single_srt_file) for single_srt_file in srt_files]))
             DIR_label.pack()
+            return srt_files
         else:
             DIR_label.config(text='no .srt files found')
     else:
@@ -99,6 +102,13 @@ def get_time_adjustment_and_adjust():
 
             if output_file:
                 adjust_subtitles(input_file, output_file,
+                                 time_adjustment_seconds)
+        elif srt_files:
+            folder_output = filedialog.askdirectory()
+            for single_srt_file in srt_files:
+                input_file_name = os.path.basename(single_srt_file)
+                output_file = os.path.join(folder_output, input_file_name)
+                adjust_subtitles(single_srt_file, output_file,
                                  time_adjustment_seconds)
 
 
