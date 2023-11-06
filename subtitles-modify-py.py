@@ -4,21 +4,30 @@ from datetime import timedelta
 from tkinter import filedialog
 import os
 import glob
+import customtkinter as ctk
 
-root = tk.Tk()
-root.title("Subtitles Timestamp Modify")
-root.geometry('400x400')
+
+app = ctk.CTk()
+app.geometry("400x400")
+app.title("Subtitles Timestamp Modify")
+ctk.set_appearance_mode("system")
+
+ctk.set_default_color_theme("green")
+
+# root = tk.Tk()
+# root.title("Subtitles Timestamp Modify")
+# root.geometry('400x400')
 
 
 def show_error_message(message):
-    error_window = tk.Toplevel()
+    error_window = ctk.CTkToplevel()
     error_window.title("Error")
 
-    label = tk.Label(error_window, text=message, padx=10, pady=10)
+    label = ctk.CTkLabel(error_window, text=message, padx=10, pady=10)
     label.pack()
 
-    ok_button = tk.Button(error_window, text="OK",
-                          command=error_window.destroy)
+    ok_button = ctk.CTkButton(error_window, text="OK",
+                              command=error_window.destroy)
     ok_button.pack()
 
 
@@ -34,10 +43,10 @@ def open_and_display_srt(input_file, *args, **kwargs):
     try:
         with open(input_file, 'r', encoding='utf-8') as srt_file:
             content = srt_file.read()
-            read_window = tk.Toplevel(root)
+            read_window = ctk.CTkToplevel(app)
             read_window.title(f"{input_file} content")
             read_window.geometry("300x200")
-            text_widget = tk.Text(read_window, wrap="none")
+            text_widget = ctk.CTkTextbox(read_window, wrap="none")
             text_widget.insert("1.0", content)
             text_widget.pack(fill="both", expand=True)
     except FileNotFoundError:
@@ -80,14 +89,14 @@ def srt_file_browsing():
         filetypes=[("SRT files", "*.srt")])
     if (input_file):
         input_file_name = os.path.basename(input_file)
-        fileName_Label.config(text=input_file_name)
+        fileName_Label.configure(text=input_file_name)
         return input_file
     return False
 
 
 def srt_folder_browsing():
     global folderPath, srt_files
-    DIR_label = tk.Label(root, text='', wraplength=400)
+    DIR_label = ctk.CTkLabel(app, text='', wraplength=400)
     folderPath = filedialog.askdirectory(title="Select a folder")
     if folderPath:
         srt_files = glob.glob(os.path.join(folderPath, '*.srt'))
@@ -95,12 +104,12 @@ def srt_folder_browsing():
         if srt_files:
             for single_srt_file in srt_files:
                 input_file_name = os.path.basename(single_srt_file)
-                display_button = tk.Button(
-                    root, text=f"Display {input_file_name}", command=lambda file=single_srt_file: open_and_display_srt(file))
+                display_button = ctk.CTkButton(
+                    app, text=f"Display {input_file_name}", command=lambda file=single_srt_file: open_and_display_srt(file))
                 display_button.pack()
 
         else:
-            DIR_label.config(text='no .srt files found')
+            DIR_label.configure(text='no .srt files found')
     else:
         show_error_message('error found in the chosen directory')
 
@@ -130,23 +139,23 @@ def get_time_adjustment_and_adjust():
                                  time_adjustment_seconds)
 
 
-BrowseFiles_btn = tk.Button(root, text="Browse srt file",
-                            command=srt_file_browsing)
+BrowseFiles_btn = ctk.CTkButton(app, text="Browse srt file",
+                                command=srt_file_browsing)
 BrowseFiles_btn.pack()
 
-fileName_Label = tk.Label(root, text='')
+fileName_Label = ctk.CTkLabel(app, text='')
 fileName_Label.pack()
 
-BrowseDIR_btn = tk.Button(root, text="select a directory",
-                          command=srt_folder_browsing)
+BrowseDIR_btn = ctk.CTkButton(app, text="select a directory",
+                              command=srt_folder_browsing)
 BrowseDIR_btn.pack()
 
-timeEntry = tk.Entry(root)
+timeEntry = ctk.CTkEntry(app)
 timeEntry.pack()
 
-adjust_button = tk.Button(root, text="Adjust and save",
-                          command=get_time_adjustment_and_adjust)
+adjust_button = ctk.CTkButton(app, text="Adjust and save",
+                              command=get_time_adjustment_and_adjust)
 adjust_button.pack()
 
 
-root.mainloop()
+app.mainloop()
