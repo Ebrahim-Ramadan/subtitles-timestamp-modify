@@ -3,4 +3,4 @@ simple app to adjust the .srt files (delay or get some subtitles earlier), provi
 #### ctk documentation notes
 * [the ctkTopLevel](https://github.com/TomSchimansky/CustomTkinter/wiki/CTkToplevel) for a new window
 + [some basic examples](https://github.com/TomSchimansky/CustomTkinter/blob/master/examples/simple_example.py)
-- [my other projects with sqlite3 and ctk](https://github.com/Ebrahim-Ramadan/CTK-basic-form/)
+- [my other projects with sqlite3 and ctk](https://github.com/Ebrahim-Ramadan/CTK-basic-form/blob/main/basic%20form%20ctk.py)
