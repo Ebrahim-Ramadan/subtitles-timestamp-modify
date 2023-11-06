@@ -37,8 +37,9 @@ def open_and_display_srt(input_file, *args, **kwargs):
             read_window = tk.Toplevel(root)
             read_window.title(f"{input_file} content")
             read_window.geometry("300x200")
-            sub_label = tk.Label(read_window, text=f"{content}")
-            sub_label.pack()
+            text_widget = tk.Text(read_window, wrap="none")
+            text_widget.insert("1.0", content)
+            text_widget.pack(fill="both", expand=True)
     except FileNotFoundError:
         print(f"The file '{input_file}' was not found.")
     except Exception as e:
@@ -80,9 +81,6 @@ def srt_file_browsing():
     if (input_file):
         input_file_name = os.path.basename(input_file)
         fileName_Label.config(text=input_file_name)
-        display_content_button = tk.Button(
-            root, text="Display .srt Content", command=open_and_display_srt(input_file))
-        display_content_button.pack()
         return input_file
     return False
 
