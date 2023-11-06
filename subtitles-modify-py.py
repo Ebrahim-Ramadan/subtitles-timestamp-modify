@@ -30,6 +30,21 @@ def is_not_number(input_str):
     return False
 
 
+def open_and_display_srt(input_file, *args, **kwargs):
+    try:
+        with open(input_file, 'r', encoding='utf-8') as srt_file:
+            content = srt_file.read()
+            read_window = tk.Toplevel(root)
+            read_window.title(f"{input_file} content")
+            read_window.geometry("300x200")
+            sub_label = tk.Label(read_window, text=f"{content}")
+            sub_label.pack()
+    except FileNotFoundError:
+        print(f"The file '{input_file}' was not found.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+
 def adjust_subtitles(input_file, output_file, time_adjustment_seconds):
     try:
         with open(input_file, 'r', encoding='utf-8') as file:
@@ -65,6 +80,9 @@ def srt_file_browsing():
     if (input_file):
         input_file_name = os.path.basename(input_file)
         fileName_Label.config(text=input_file_name)
+        display_content_button = tk.Button(
+            root, text="Display .srt Content", command=open_and_display_srt(input_file))
+        display_content_button.pack()
         return input_file
     return False
 
@@ -77,10 +95,12 @@ def srt_folder_browsing():
         srt_files = glob.glob(os.path.join(folderPath, '*.srt'))
 
         if srt_files:
-            DIR_label.config(text='\n'.join(
-                [os.path.basename(single_srt_file) for single_srt_file in srt_files]))
-            DIR_label.pack()
-            return srt_files
+            for single_srt_file in srt_files:
+                input_file_name = os.path.basename(single_srt_file)
+                display_button = tk.Button(
+                    root, text=f"Display {input_file_name}", command=lambda file=single_srt_file: open_and_display_srt(file))
+                display_button.pack()
+
         else:
             DIR_label.config(text='no .srt files found')
     else:
@@ -123,12 +143,12 @@ BrowseDIR_btn = tk.Button(root, text="select a directory",
                           command=srt_folder_browsing)
 BrowseDIR_btn.pack()
 
-
 timeEntry = tk.Entry(root)
 timeEntry.pack()
 
 adjust_button = tk.Button(root, text="Adjust and save",
                           command=get_time_adjustment_and_adjust)
 adjust_button.pack()
+
 
 root.mainloop()
